@@ -17,10 +17,10 @@ Here we are creating a data frame comprised of:
 * A factor vector of length 10, with 3 different factor "levels"
 
 ```{r dataframe}
-#load tidyverse
+# load tidyverse
 library(tidyverse)
 
-#create our vectors
+# create our vectors
 set.seed(123)
 vec_normal = rnorm(10)
 
@@ -83,4 +83,47 @@ logic_3 * vec_normal
 
 As shown above R returns an error when we try to multiply a factor in the second step, but we are able to convert the factor to numeric, then successfully multiply. Notably we see that R assumes factor levels start at the number 1 so that the first level is coded as 1 and the second level as 2, whereas FALSE and TRUE correspond to 0 and 1, respectively. 
 
+# Problem 2
 
+In this problem, we will be looking at the penguins dataset, which is available through the palmerpenguins package in R. 
+
+```{r load}
+# load data
+data("penguins", package = "palmerpenguins")
+```
+
+The penguins dataset contains information about Antarctic penguins. Variables included are `r variable.names(penguins)`. This includes the following information for each variable: 
+
+* Species categories: `r levels(penguins$species)`
+* Island categories: `r levels(penguins$island)`
+* Bill length minimum and maximum value (in mm): `r range(penguins$bill_length_mm, na.rm = TRUE)`
+* Bill depth minimum and maximum value (in mm): `r range(penguins$bill_depth_mm, na.rm = TRUE)`
+* Flipper length minimum and maximum value (in mm): `r range(penguins$flipper_length_mm, na.rm = TRUE)`
+* Body mass minimum and maximum value (in g): `r range(penguins$body_mass_g, na.rm = TRUE)`
+* Sex categories: `r levels(penguins$sex)`
+* Year categories: `r range(penguins$year)`
+
+The dataset contains `r ncol(penguins)` different variables on `r nrow(penguins)` individual penguins. 
+
+The mean flipper length is `r mean(penguins$flipper_length_mm, na.rm = TRUE)` mm. 
+
+We will now make a scatterplot of flipper length versus bill length, grouped by species. 
+
+```{r scatterplot, warning = FALSE}
+# load dplyr
+library(dplyr)
+
+# create scatter plot using ggplot
+penguins %>% 
+  ggplot(aes(x = bill_length_mm, y = flipper_length_mm, 
+             color = species)) +
+  geom_point() + 
+  ggtitle("Antarctic Penguins: Flipper versus Bill Length") + 
+  xlab("Bill Length (mm)") + 
+  ylab("Flipper Length (mm)")
+
+# export scatter plot to PDF
+ggsave("penguins_scatter_plot.pdf", height = 6, width = 6)
+```
+
+This scatterplot shows that the different species of Antarctic penguins have distinct relationships between flipper and bill lengths. The Adelie penguins shown in salmon color have relatively short flippers and bills. The Chinstrap penguins shown in green have short flippers but relatively long bills. The Gentoo penguins shown in blue have both long flippers and bills. 
