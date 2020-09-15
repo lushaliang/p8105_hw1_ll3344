@@ -20,22 +20,14 @@ Here we are creating a data frame comprised of:
 # load tidyverse
 library(tidyverse)
 
-# create our vectors
+# create data frame                 
 set.seed(123)
-vec_normal = rnorm(10)
 
-vec_logical = as.logical(vec_normal > 0)
-
-vec_char = c("Learning", "R", "is", "so", "much", "fun", "indeed", "I", "do", "declare")
-
-vec_factor = factor(c("alpacas", "sloths", "pandas", "pandas", "sloths", "alpacas", "alpacas", "alpacas", "sloths", "pandas"))
-
-# create our data frame using the above defined vectors                    
 df_prob_1 = tibble(
-  vec_normal,
-  vec_logical,
-  vec_char,
-  vec_factor
+  vec_normal = rnorm(10),
+  vec_logical = as.logical(vec_normal > 0),
+  vec_char = c("Learning", "R", "is", "so", "much", "fun", "indeed", "I", "do", "declare"),
+  vec_factor = factor(c("alpacas", "sloths", "pandas", "pandas", "sloths", "alpacas", "alpacas", "alpacas", "sloths", "pandas"))
 )
 
 df_prob_1
@@ -43,17 +35,17 @@ df_prob_1
 ```
 
 ## (Attempting) means
-The mean of vec_normal is `r mean(vec_normal)`. 
-The mean of vec_logical is `r mean(vec_logical)`. 
-The mean of vec_char is `r mean(vec_char)`. This returns an error because the argument is not numeric or logical and therefore taking the mean does not make sense. 
-The mean of vec_factor is `r mean(vec_factor)`. This also returns an error because the argument is not numeric or logical. 
+The mean of vec_normal is `r mean(pull(df_prob_1, vec_normal))`. 
+The mean of vec_logical is `r mean(pull(df_prob_1, vec_logical))`. 
+The mean of vec_char is `r mean(pull(df_prob_1, vec_char))`. This returns an error because the argument is not numeric or logical and therefore taking the mean does not make sense. 
+The mean of vec_factor is `r mean(pull(df_prob_1, vec_factor))`. This also returns an error because the argument is not numeric or logical. 
 
 We can convert variables from one type to another in certain cases. Below is code showing our attempt to convert logical, character, and factor variables to numeric. 
 
 ```{r numeric, results = "hide", warning = FALSE}
-as.numeric(vec_logical)
-as.numeric(vec_char)
-as.numeric(vec_factor)
+as.numeric(pull(df_prob_1, vec_logical))
+as.numeric(pull(df_prob_1, vec_char))
+as.numeric(pull(df_prob_1, vec_factor))
 ```
 
 In the first case we will be successful in converting vec_logical to numeric in that R assumes that FALSE translates to 0 and TRUE translates to 1 in numeric form. Since we have 5 "TRUE"s and 5 "FALSE"s, this explains why our mean was 0.5. 
@@ -69,16 +61,13 @@ Finally, we will do the following data manipulation:
 
 ```{r manipulation}
 # Step 1
-logic_1 = as.numeric(vec_logical)
-logic_1 * vec_normal
+as.numeric(pull(df_prob_1, vec_logical)) * pull(df_prob_1, vec_normal)
 
 # Step 2
-logic_2 = as.factor(vec_logical)
-logic_2 * vec_normal
+as.factor(pull(df_prob_1, vec_logical)) * pull(df_prob_1, vec_normal)
 
 # Step 3
-logic_3 = as.numeric(logic_2)
-logic_3 * vec_normal
+as.numeric(as.factor(pull(df_prob_1, vec_logical))) * pull(df_prob_1, vec_normal)
 ```
 
 As shown above R returns an error when we try to multiply a factor in the second step, but we are able to convert the factor to numeric, then successfully multiply. Notably we see that R assumes factor levels start at the number 1 so that the first level is coded as 1 and the second level as 2, whereas FALSE and TRUE correspond to 0 and 1, respectively. 
@@ -94,18 +83,18 @@ data("penguins", package = "palmerpenguins")
 
 The penguins dataset contains information about Antarctic penguins. Variables included are `r variable.names(penguins)`. This includes the following information for each variable: 
 
-* Species categories: `r levels(penguins$species)`
-* Island categories: `r levels(penguins$island)`
-* Bill length minimum and maximum value (in mm): `r range(penguins$bill_length_mm, na.rm = TRUE)`
-* Bill depth minimum and maximum value (in mm): `r range(penguins$bill_depth_mm, na.rm = TRUE)`
-* Flipper length minimum and maximum value (in mm): `r range(penguins$flipper_length_mm, na.rm = TRUE)`
-* Body mass minimum and maximum value (in g): `r range(penguins$body_mass_g, na.rm = TRUE)`
-* Sex categories: `r levels(penguins$sex)`
-* Year categories: `r range(penguins$year)`
+* Species categories: `r levels(pull(penguins, species))`
+* Island categories: `r levels(pull(penguins, island))`
+* Bill length minimum and maximum value (in mm): `r range(pull(penguins, bill_length_mm), na.rm = TRUE)`
+* Bill depth minimum and maximum value (in mm): `r range(pull(penguins, bill_depth_mm), na.rm = TRUE)`
+* Flipper length minimum and maximum value (in mm): `r range(pull(penguins, flipper_length_mm), na.rm = TRUE)`
+* Body mass minimum and maximum value (in g): `r range(pull(penguins, body_mass_g), na.rm = TRUE)`
+* Sex categories: `r levels(pull(penguins, sex))`
+* Year categories: `r range(pull(penguins, year))`
 
 The dataset contains `r ncol(penguins)` different variables on `r nrow(penguins)` individual penguins. 
 
-The mean flipper length is `r mean(penguins$flipper_length_mm, na.rm = TRUE)` mm. 
+The mean flipper length is `r mean(pull(penguins, flipper_length_mm), na.rm = TRUE)` mm. 
 
 We will now make a scatterplot of flipper length versus bill length, grouped by species. 
 
